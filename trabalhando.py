@@ -1,26 +1,58 @@
 from PIL import Image
 import pyautogui
 import pytesseract
-from googletrans import Translator  # Necessário instalar a biblioteca googletrans
+from googletrans import Translator 
+from flask import Flask, request, jsonify
+from flask_cors import CORS  # Permitir requisições do navegador
 
-# Tirar print
-screenshot = pyautogui.screenshot()
+# Inicia o Flask
+app = Flask(__name__)
+CORS(app)
 
-# Salvar imagem
-screenshot.save("screenshot.png")
+# Função que faz captura, OCR e tradução
+def capturar_traduzir(idioma_de, idioma_para):
+    # Tirar print da tela
+    screenshot = pyautogui.screenshot()
+    screenshot.save("screenshot.png")
 
-# Identificar texto na imagem
-texto = pytesseract.image_to_string(screenshot, lang="por")  # Português
+    # OCR: reconhecer texto
+    texto = pytesseract.image_to_string(screenshot, lang=idioma_de)
 
-# Traduzir o texto da imagem
-translator = Translator()
-texto_traduzido = translator.translate(texto, src='pt', dest='en').text  # Traduzir de português para inglês
+    # Traduzir texto
+    translator = Translator()
+    texto_traduzido = translator.translate(texto, src=idioma_de, dest=idioma_para).text
 
-# Apresentar o texto original e traduzido
-print("Texto Original:")
-print(texto)
-print("\nTexto Traduzido:")
-print(texto_traduzido)
+    return {
+        "texto_original": texto,
+        "texto_traduzido": texto_traduzido
+    }
 
-# Exibir a imagem
-screenshot.show()
+# Rota chamada pelo popup
+@app.route('/traduzir', methods=['POST'])
+def traduzir():
+    dados = request.get_json()
+    idioma_de = dados.get('de')
+    idioma_para = dados.get('para')
+
+    # Traduzir com base nos idiomas recebidos
+    resultado = capturar_traduzir(idioma_de, idioma_para)
+
+    return jsonify(resultado)
+
+# Iniciar o servidor
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
+
+
+
+
+
+
+ANALISAR O CODIGO
+
+
+
+
+
