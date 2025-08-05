@@ -5,7 +5,6 @@ from flask import render_template, request, jsonify
 from main import app
 import base64
 import io 
-import os
 
 MAPA_GOOGLETRA = {
     'eng': 'en',
