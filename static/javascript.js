@@ -22,7 +22,7 @@ function BotaoTraduzir(){
             return;
         }
 
-        fetch("//kobayashi.onrender.com", { 
+        fetch("https://kobayashi.onrender.com", { 
             method: "POST",
             headers:{
                 "Content-Type": "application/json"
