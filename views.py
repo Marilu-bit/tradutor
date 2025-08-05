@@ -1,5 +1,4 @@
 from PIL import Image, ImageDraw, ImageFont
-import pyautogui
 import pytesseract
 from googletrans import Translator
 from flask import render_template, request, jsonify
