@@ -45,7 +45,9 @@ def traduzir_imagem():
         imagem_base64 = imagem_base64.split("base64,")[1]
     try:
         imagem_bytes = base64.b64decode(imagem_base64)
-        screenshot_pil = Image.open(io.BytesIO(imagem_bytes))
+        screenshot_pil = Image.open(io.BytesIO(imagem_bytes))#se transformou em imagem
+        #salvar em uma nova variavel o original
+        #fazer o tratamento em screenshot_pil
     except Exception as e:
         return jsonify({"error": f"Erro ao decodificar a imagem: {e}", "texto_traduzido": "Erro."}), 400
     
@@ -65,7 +67,7 @@ def capturar_traduzir(imagem_pil, idioma_atual_tesseract, idioma_novo_googletran
         # Executar OCR com bounding boxes
         info = pytesseract.image_to_data(imagem_pil, lang=idioma_atual_tesseract, output_type=pytesseract.Output.DICT)
 
-        desenho = ImageDraw.Draw(imagem_pil)
+        desenho = ImageDraw.Draw(imagem_pil)#deve se tornar a imagem original
         fonte = ImageFont.truetype("arial.ttf", 20)
         tradutor = Translator()
 
@@ -73,10 +75,10 @@ def capturar_traduzir(imagem_pil, idioma_atual_tesseract, idioma_novo_googletran
 
 # Loop pelas caixas de texto
 
-        for i in range(len(info['text'])):
+        for i in range(len(info['text'])):#vou ter que apgar
             texto = info['text'][i].strip()
             if texto:
-                x, y, w, h = info['left'][i], info['top'][i], info['width'][i], info['height'][i]
+                x, y, w, h = info['left'][i], info['top'][i], info['width'][i], info['height'][i]#fazer o retangulo. essa parte tbm determina o tamalho do caractere
 
 # Traduzir texto
                 try:
@@ -87,9 +89,9 @@ def capturar_traduzir(imagem_pil, idioma_atual_tesseract, idioma_novo_googletran
                     parte_traduzido.append(texto_traduzido)
 
                 # Apaga texto original
-                desenho.rectangle([(x, y), (x + w, y + h)], fill="white")
+                desenho.rectangle([(x, y), (x + w, y + h)], fill="white")#mudar pra fazer um retangulo que cubra a frase  ao inves da palavra
                 # Desenha texto traduzido
-                desenho.text((x, y), texto_traduzido, fill="black", font=fonte)
+                desenho.text((x, y), texto_traduzido, fill="black", font=fonte)#mudar para um bloco de palavras 
 
         # Converter imagem final para base64
         buffer = io.BytesIO()
